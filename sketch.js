@@ -1,74 +1,62 @@
 const Engine = Matter.Engine;
-const World= Matter.World;
+const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Constraint = Matter.Constraint;
 
 var engine, world;
-var box1, pig1;
-var backgroundImg,platform;
+var stand,ball;
+function setup() {
+  createCanvas(400,400);
+  engine = Engine.create();
+  world = engine.world;
 
-function preload() {
-    backgroundImg = loadImage("sprites/bg.png");
-}
+  var stand_options={
+    isStatic: true
+  }
+stand = Bodies.rectangle(200,100,200,20,stand_options);
+World.add(world,stand);
 
-function setup(){
-    var canvas = createCanvas(1200,400);
-    engine = Engine.create();
-    world = engine.world;
+var ball_options = {
 
-
-    ground = new Ground(600,height,1200,20);
-    platform = new Ground(150, 305, 300, 170);
-
-    box1 = new Box(700,320,70,70);
-    box2 = new Box(920,320,70,70);
-    pig1 = new Pig(810, 350);
-    log1 = new Log(810,260,300, PI/2);
-
-    box3 = new Box(700,240,70,70);
-    box4 = new Box(920,240,70,70);
-    pig3 = new Pig(810, 220);
-
-    log3 =  new Log(810,180,300, PI/2);
-
-    box5 = new Box(810,160,70,70);
-    log4 = new Log(760,120,150, PI/7);
-    log5 = new Log(870,120,150, -PI/7);
-
-    log6 = new Log(200,200,90,PI/2);
-
-    bird = new Bird(100,100);
-
-    chain1 = new Chain(bird.body,log6.body);
+  restitution : 1.0,
+  density : 1.0
 
 }
 
-function draw(){
-    background(backgroundImg);
-    Engine.update(engine);
-    console.log(box2.body.position.x);
-    console.log(box2.body.position.y);
-    console.log(box2.body.angle);
-    box1.display();
-    box2.display();
-    ground.display();
-    pig1.display();
-    log1.display();
+ball  = Bodies.circle(220,200,40,ball_options);
+World.add(world,ball);
+var options = {
+  bodyA : ball,
+  bodyB : stand,
+  stiffness: 0.004,
+  length : 100
+}
+var spring = Constraint.create(options);
+World.add(world,spring);
 
-    box3.display();
-    box4.display();
-    pig3.display();
-    log3.display();
+fill("red");
+}
 
-    box5.display();
-    log4.display();
-    log5.display();
+function draw() {
+  background("yellow"); 
+  Engine.update(engine);
+  fill ("green");
+rectMode(CENTER);
+rect(stand.position.x,stand.position.y,200,20);
 
-    log6.display();
+fill("orange");
+ellipseMode(RADIUS);
+ellipse(ball.position.x,ball.position.y,40);
 
-    bird.display();
+strokeWeight(2);
+stroke("green");
+line(ball.position.x,ball.position.y,stand.position.x,stand.position.y)
+if(keyCode===32){
+ball.position.y = mouseY;
+ball.position.x = mouseX;
+}
 
-    chain1.display();
-    
-    platform.display();
+else if (keyCode === ENTER){
+ball.position.x = 200;
+}
 }
